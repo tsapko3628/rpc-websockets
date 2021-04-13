@@ -66,14 +66,16 @@ export default class CommonClient extends EventEmitter
             autoconnect = true,
             reconnect = true,
             reconnect_interval = 1000,
-            max_reconnects = 5
+            max_reconnects = 5,
+            ...options,
         } = {},
         generate_request_id?: (method: string, params: object | Array<any>) => number
     )
     {
         super()
 
-        this.webSocketFactory = webSocketFactory
+        this.webSocketFactory = webSocketFactory;
+        this.options = options
 
         this.queue = {}
         this.rpc_id = 0
@@ -288,7 +290,7 @@ export default class CommonClient extends EventEmitter
         options: IWSClientAdditionalOptions & NodeWebSocket.ClientOptions
     )
     {
-        this.socket = this.webSocketFactory(address, options)
+        this.socket = this.webSocketFactory(address, { ...this.options, ...options });
 
         this.socket.addEventListener("open", () =>
         {
